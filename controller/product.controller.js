@@ -1,48 +1,48 @@
-const ProductService = require('../services/product.services');
+const ProductModel = require('../model/product.model');
+const mongoose = require('mongoose');
 
-// createTodo function to create a todo item for the user and sending to db
-// req comes from the frontend to the api
-// res is what is sent back to the frontend from the api
-exports.createCategory = async (req, res, next)=>{
+// Function to create a product
+exports.createProduct = async (req, res, next) => {
     try {
-       // initializing parameters in the request body 
-       const {productName, productDesc, productImage, productCat, productPrice, stock} = req.body;
-       // send these 3 data to services
-       let product = await ProductService.createProduct(productName, productDesc, productImage, productCat, productPrice, stock);
-       res.json({status:true, success: product}); 
-
+        // Initializing parameters in the request body
+        const { productName, productDesc, productImage, productCat, productPrice, stock } = req.body;
+        // Create a new product using the ProductModel
+        const createdProduct = new ProductModel({ productName, productDesc, productImage, productCat, productPrice, stock });
+        // Save the product to the database
+        const product = await createdProduct.save();
+        res.json({ status: true, success: product });
     } catch (error) {
         next(error);
     }
 }
 
-// function to get all todo tasks of a particular user
-exports.getProductByCategory = async (req, res, next) => {
+// Get a list of all products for a specific product category
+exports.getProductsByCategory = async (req, res, next) => {
     try {
-       // Extract the userId from the query parameters
-       const { productCat } = req.query;
-       
-       // data will be fetched and stored in this todo
-       let productByCat = await ProductService.getProductByCategory(productCat);
-       res.json({ status: true, success: productByCat });
+        const { productCat } = req.query;
+        
+        // Check if the productCat is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(productCat)) {
+            return res.status(400).json({ status: false, error: 'Invalid category ID' });
+        }
 
+        // Call the service to get products by category
+        const products = await ProductModel.find({ productCat }).populate('productCat');
+        res.json({ status: true, success: products });
     } catch (error) {
         next(error);
     }
-}
+};
 
-// function to delete todo task of a user
+// Function to delete a product by ID
 exports.deleteProduct = async (req, res, next) => {
     try {
-       // Extract the userId from the query parameters
-       const {id} = req.body;
-       
-       // data will be fetched and stored in this todo
-       let deleteProduct = await ProductService.deleteProduct(id);
-       res.json({ status: true, success: deleteProduct });
-
+        // Extract the product ID from the query parameters
+        const { id } = req.body;
+        // Delete the product
+        const deletedProduct = await ProductModel.findOneAndDelete({ _id: id });
+        res.json({ status: true, success: deletedProduct });
     } catch (error) {
         next(error);
     }
 }
-

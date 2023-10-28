@@ -10,12 +10,14 @@ class productService{
     }
 
     // function to get products by categories
-    static async getProductByCategory(productCat){
-        //create object of todomodel which will fetch data by userid
-        // mongoose query to fetch
-        const getProductByCategory = await todoModel.find({productCat});
-        return getProductByCategory;
-    }
+    static async getProductsByCategory(productCat) {
+        try {
+          const products = await productModel.find({ productCat }).populate('productCat');
+          return products;
+        } catch (error) {
+          throw error;
+        }
+      }
 
      // function to delete a users todo
      static async deleteTodoData(_id){
