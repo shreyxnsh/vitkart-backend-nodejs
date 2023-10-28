@@ -2,14 +2,14 @@ const productModel = require('../model/product.model');
 
 
 class productService{
-    // function to store data in the db
+    // function to create a product
     static async createProduct(productName, productDesc, productImage, productCat, productPrice, stock){
-        //create object of the todoModel
+        //create object of the productModel
         const createProduct = new productModel({productName, productDesc, productImage, productCat, productPrice, stock});
         return await createProduct.save();
     }
 
-    // function to get users todo task
+    // function to get products by categories
     static async getProductByCategory(productCat){
         //create object of todomodel which will fetch data by userid
         // mongoose query to fetch

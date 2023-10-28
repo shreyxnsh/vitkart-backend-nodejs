@@ -1,62 +1,45 @@
-const CategoryService = require('../services/category.services');
+const categoryModel = require('../model/category.model');
 
-// createTodo function to create a todo item for the user and sending to db
-// req comes from the frontend to the api
-// res is what is sent back to the frontend from the api
-exports.createCategory = async (req, res, next)=>{
+// Create a new category
+exports.createCategory = async (req, res, next) => {
     try {
-       // initializing parameters in the request body 
-       const {categoryName, categoryDesc, categoryImage} = req.body;
-       // send these 3 data to services
-       let category = await CategoryService.createCategory(categoryName, categoryDesc, categoryImage);
-       res.json({status:true, success: category}); 
-
+        const { categoryName, categoryDesc, categoryImage } = req.body;
+        const newCategory = new categoryModel({ categoryName, categoryDesc, categoryImage });
+        const createdCategory = await newCategory.save();
+        res.json({ status: true, success: createdCategory });
     } catch (error) {
         next(error);
     }
 }
 
-// function to get all todo tasks of a particular user
+// Get all categories
 exports.getCategories = async (req, res, next) => {
     try {
-       // Extract the userId from the query parameters
-       
-       // data will be fetched and stored in this todo
-       let category = await CategoryService.getCategories();
-       res.json({ status: true, success: category });
-
+        const categoryData = await categoryModel.find();
+        res.json({ status: true, success: categoryData });
     } catch (error) {
         next(error);
     }
 }
 
-// function to get specific category details by ID
+// Get a specific category by ID
 exports.getCategoryById = async (req, res, next) => {
     try {
-       // Extract the category ID from the query parameters
-       const {id} = req.query;
-       
-       // data will be fetched and stored in this todo
-       let category = await CategoryService.getCategoryById(id);
-       res.json({ status: true, success: category });
-
+        const { id } = req.params;
+        const categoryData = await categoryModel.findById(id);
+        res.json({ status: true, success: categoryData });
     } catch (error) {
         next(error);
     }
 }
 
-// function to delete todo task of a user
+// Delete a category
 exports.deleteCategory = async (req, res, next) => {
     try {
-       // Extract the userId from the query parameters
-       const {id} = req.body;
-       
-       // data will be fetched and stored in this todo
-       let deleted = await CategoryService.deleteCategory(id);
-       res.json({ status: true, success: deleted });
-
+        const { id } = req.body;
+        const deletedCategory = await categoryModel.findOneAndDelete({ _id: id });
+        res.json({ status: true, success: deletedCategory });
     } catch (error) {
         next(error);
     }
 }
-
