@@ -34,13 +34,13 @@ exports.login = async (req, res, next) => {
         const user = await exports.checkUser(email);
         
         if (!user) {
-            throw new Error('User does not exist');
+            return res.status(401).json({ status: false, message: 'User does not exist' });
         }
 
         const isMatch = await user.comparePassword(password);
 
-        if (isMatch === false) {
-            throw new Error('Password is not valid');
+        if (!isMatch) {
+            return res.status(401).json({ status: false, message: 'Password is not valid' });
         }
 
         const tokenData = { _id: user._id, email: user.email };
@@ -48,6 +48,9 @@ exports.login = async (req, res, next) => {
 
         res.status(200).json({ status: true, token: token });
     } catch (error) {
-        throw error;
+        // Handle other errors
+        console.error(error);
+        res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 }
+
