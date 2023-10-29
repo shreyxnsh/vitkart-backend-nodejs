@@ -10,6 +10,7 @@ exports.createProduct = async (req, res, next) => {
         const createdProduct = new ProductModel({ productName, productDesc, productImage, productCat, productPrice, stock });
         // Save the product to the database
         const product = await createdProduct.save();
+        
         res.json({ status: true, success: product });
     } catch (error) {
         next(error);
