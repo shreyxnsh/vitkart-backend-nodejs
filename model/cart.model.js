@@ -3,20 +3,21 @@ const Schema = mongoose.Schema;
 
 const cartSchema = new Schema({
     user: {
-        type: Schema.Types.ObjectId,
-        ref: 'user', // Reference to your User model
-        required: true
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+      unique: true
     },
-    product: {
+    items: [{
+      product: {
         type: Schema.Types.ObjectId,
-        ref: 'product', // Reference to your Product model
-        required: true
-    },
-    quantity: {
+        ref: 'product'
+      },
+      quantity: {
         type: Number,
-        required: true,
-        default: 1 // You can change the default quantity as needed
-    }
+        required: true
+      }
+    }]
 });
 
 const CartModel = mongoose.model('Cart', cartSchema);
