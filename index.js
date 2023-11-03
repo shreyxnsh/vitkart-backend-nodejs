@@ -2,7 +2,6 @@
 
 // to get everything which is mentioned in the app folder.
 const app = require('./app');
-const http = require('http').createServer(app).listen(8000);
 const db = require('./config/database');
 const userModel = require('./model/user.model');
 
