@@ -8,7 +8,7 @@ const{Schema} = mongoose;
 // schema for the todo items
 const categorySchema = new Schema({
 
-    categoryName:{
+    categoryName:{  
         type: String,
         required: true,
     },
