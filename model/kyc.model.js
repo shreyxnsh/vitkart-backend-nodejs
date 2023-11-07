@@ -17,7 +17,7 @@ const kycSchema = new Schema({
         required: true,
     },
     regNo:{
-        type: Number,
+        type: String,
         required: true,
         unique:true
     },
