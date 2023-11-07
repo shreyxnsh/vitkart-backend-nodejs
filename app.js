@@ -10,6 +10,7 @@ const userRouter = require('./routers/user.router');
 const categoryRouter = require('./routers/category.router');
 const productRouter = require('./routers/product.router');
 const cartRouter = require('./routers/cart.router');
+const kycRouter = require('./routers/kyc.router');
 
 
 
@@ -24,6 +25,7 @@ app.use('/', userRouter);
 app.use('/', categoryRouter);
 app.use('/', productRouter);
 app.use('/', cartRouter);
+app.use('/', kycRouter);
 
 
 // Initialize Passport and session management
