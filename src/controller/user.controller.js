@@ -1,4 +1,4 @@
-const userModel = require('../model/user.model');
+const userModel = require('../src/../model/user.model');
 const jwt = require('jsonwebtoken');
 
 // Function to register a new user

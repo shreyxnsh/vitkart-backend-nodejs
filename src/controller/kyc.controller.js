@@ -1,4 +1,4 @@
-const kycModel = require('../model/kyc.model');
+const kycModel = require('../src/../model/kyc.model');
 
 // Add KYC details
 exports.createKyc = async (req, res, next) => {

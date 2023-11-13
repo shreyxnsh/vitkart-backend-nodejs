@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const db = require('../config/database');
+const db = require('../src/../config/database');
 
 // create user schema
 const{Schema} = mongoose;

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const productController = require('../controller/product.controller');
+const productController = require('../src/../controller/product.controller');
 
 
 //create todo task

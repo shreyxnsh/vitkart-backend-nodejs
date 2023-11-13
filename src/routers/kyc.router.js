@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const kycController = require('../controller/kyc.controller');
+const kycController = require('../src/../controller/kyc.controller');
 
 
 //add kyc details for user

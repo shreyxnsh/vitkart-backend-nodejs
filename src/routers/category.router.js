@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const categoryController = require('../controller/category.controller');
+const categoryController = require('../src/../controller/category.controller');
 
 
 //create category

@@ -1,5 +1,5 @@
-const CartModel = require('../model/cart.model'); // You'll need to create a cart model
-const ProductModel = require('../model/product.model'); // Import the product model
+const CartModel = require('../src/../model/cart.model'); // You'll need to create a cart model
+const ProductModel = require('../src/../model/product.model'); // Import the product model
 const mongoose = require('mongoose');
 
 // Add product to cart

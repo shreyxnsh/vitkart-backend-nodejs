@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // creating an object of user model so that we can identify the todo belongs to which user
 const categoryModel = require('./category.model');
 // this database connectivity will create a model in that particular db
-const db = require('../config/database');
+const db = require('../src/../config/database');
 
 // create user schema
 const{Schema} = mongoose;

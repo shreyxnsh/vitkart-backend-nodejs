@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const cartController = require('../controller/cart.controller');
+const cartController = require('../src/../controller/cart.controller');
 
 router.post('/addToCart', cartController.addToCart);
 router.get('/getCart', cartController.viewCart);
