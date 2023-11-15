@@ -2,20 +2,22 @@ const categoryModel = require('../src/../model/category.model');
 
 const aws = require('aws-sdk');
 const fs = require('fs');
+require('dotenv').config();
+
 
 
 // Create a new category
 exports.createCategory = async (req, res) => {
     aws.config.setPromisesDependency();
     aws.config.update({
-      accessKeyId: 'AKIAZGHOSMTD53H7EO53',
-      secretAccessKey: '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',
-      region: 'ap-south-1'
+      accessKeyId: process.env.AWS_ACCESS_KEY,
+      secretAccessKey: process.env.AWS_SECRET_KEY,
+      region: process.env.AWS_S3_REGION
     });
     const s3 = new aws.S3();
     var params = {
       ACL: 'public-read',
-      Bucket: 'vitkart',
+      Bucket: process.env.AWS_S3_BUCKET,
       Body: fs.createReadStream(req.file.path),
       Key: `categories/${req.file.originalname}`
     };
@@ -32,7 +34,7 @@ exports.createCategory = async (req, res) => {
         newCategory
           .save()
           .then(category => {
-            res.json({ message: 'User created successfully', category });
+            res.json({ message: 'Category added successfully', category });
           })
           .catch(err => {
             console.log('Error occured while trying to save to DB');

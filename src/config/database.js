@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const connection = mongoose.createConnection('mongodb+srv://shreyxnsh:Mongodb125$@cluster0.k2jqyqn.mongodb.net/vitkart', {
+require('dotenv').config();
+
+const connection = mongoose.createConnection(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000, // Increase the server selection timeout to 30 seconds
