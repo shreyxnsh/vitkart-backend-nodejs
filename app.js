@@ -1,7 +1,6 @@
 // file to use express to create routes for the apis
 const express = require('express');
 const app = express();
-const session = require('express-session');
 
 const bodyParser = require('body-parser');
 const userRouter = require('./src/routers/user.router');
@@ -9,6 +8,9 @@ const categoryRouter = require('./src/routers/category.router');
 const productRouter = require('./src/routers/product.router');
 const cartRouter = require('./src/routers/cart.router');
 const kycRouter = require('./src/routers/kyc.router');
+
+
+
 
 // body parser is used to get data which comes in the body 
 app.use(bodyParser.json());

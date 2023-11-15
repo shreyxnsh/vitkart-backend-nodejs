@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const connection = mongoose.createConnection('mongodb://127.0.0.1:27017/vitkart-db', {
+const connection = mongoose.createConnection('mongodb+srv://shreyxnsh:Mongodb125$@cluster0.k2jqyqn.mongodb.net/vitkart', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000, // Increase the server selection timeout to 30 seconds
