@@ -1,44 +1,31 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const db = require('../src/../config/database');
 
-// create user schema
-const{Schema} = mongoose;
-
-const userSchema = new Schema({
-    email:{
-        type: String,
-        lowercase: true,
-        required: true,
-        unique:true
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      lowercase: true,
+      trim: true,
     },
-    password:{
-        type: String,
-        required: true,
-    }
-});
+    //accountId can be google Id, facebook Id, github Id etc.
+    accountId: {
+      type: String,
+    },
+    name: {
+      type: String,
+      trim: true,
+    },
+    photoURL: {
+      type: String,
+    },
+    provider: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-userSchema.pre('save', async function(){
-    try {
-        var user = this;
-        const salt = await (bcrypt.genSalt(10));
-        const hashpass = await bcrypt.hash(user.password, salt);
-        user.password = hashpass;
-    } catch (error) {
-        throw error;
-    }
-});
-
-// function to compare the password entered during login via bcrypt compare
-userSchema.methods.comparePassword = async function(userPassword){
-    try {
-        const isMatch = await bcrypt.compare(userPassword, this.password);
-        return isMatch;
-    } catch (error) {
-        throw error;
-    }
-};
-
-const userModal = db.model('user', userSchema);
-
-module.exports = userModal;
+const User = mongoose.model('User', userSchema);
+module.exports = User;
