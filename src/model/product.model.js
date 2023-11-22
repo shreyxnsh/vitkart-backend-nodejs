@@ -34,7 +34,12 @@ const productSchema = new Schema({
         required: true,
         default: 0
     },
-});
+},
+{
+    timestamps: true,
+  }
+
+);
 
 // this line will name the collection in the db
 const productModel = db.model('product', productSchema);
