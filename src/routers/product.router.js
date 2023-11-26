@@ -3,7 +3,7 @@ const productController = require('../src/../controller/product.controller');
 
 
 //create todo task
-router.post('/createproduct', productController.createProduct );
+router.post('/createProduct', productController.createProduct );
 
 // get all the todo tasks of the user with userId as query parameter
 router.get('/getproductbycat', productController.getProductsByCategory);
