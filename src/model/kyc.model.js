@@ -21,6 +21,9 @@ const kycSchema = new Schema({
         required: true,
         unique:true
     },
+    profilePic:{
+        type: String,
+    },
     email:{
         type: String,
         required: true,
@@ -39,7 +42,12 @@ const kycSchema = new Schema({
         type: String,
         required: true,
     }
-});
+},
+{
+    timestamps: true,
+  }
+
+);
 
 // this line will name the collection in the db
 const kycModel = db.model('kyc', kycSchema);
