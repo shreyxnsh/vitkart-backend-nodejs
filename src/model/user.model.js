@@ -1,31 +1,22 @@
 const mongoose = require('mongoose');
+// this database connectivity will create a model in that particular db
+const db = require('../src/../config/database');
 
-const userSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      lowercase: true,
-      trim: true,
-    },
-    //accountId can be google Id, facebook Id, github Id etc.
-    accountId: {
-      type: String,
-    },
-    name: {
-      type: String,
-      trim: true,
-    },
-    photoURL: {
-      type: String,
-    },
-    provider: {
-      type: String,
-    },
+const { Schema } = mongoose;
+
+const userSchema = new Schema({
+
+  email: { 
+    type: String, 
+    unique: true, 
+    required: true 
   },
-  {
-    timestamps: true,
-  }
-);
+  password: { 
+    type: String, 
+    required: true 
+  },
+});
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const userModel = db.model('User', userSchema);
+
+module.exports = userModel;
