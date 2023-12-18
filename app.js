@@ -27,6 +27,7 @@ app.use('/api/v1', categoryRouter);
 app.use('/api/v1', productRouter);
 app.use('/api/v1', cartRouter);
 app.use('/api/v1', kycRouter);
+app.use('/api/v1', userRouter);
 
 
 
