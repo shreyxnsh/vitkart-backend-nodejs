@@ -1,8 +1,6 @@
 // file to use express to create routes for the apis
 const express = require('express');
 const app = express();
-const session = require('express-session');
-const passport = require('passport');
 
 require('dotenv').config();
 

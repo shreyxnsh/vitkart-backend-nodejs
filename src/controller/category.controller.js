@@ -1,10 +1,7 @@
 const categoryModel = require('../src/../model/category.model');
-
 const aws = require('aws-sdk');
 const fs = require('fs');
 require('dotenv').config();
-
-
 
 // Create a new category
 exports.createCategory = async (req, res) => {
