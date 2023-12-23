@@ -1,84 +1,124 @@
+const Product = require("../model/product.model");
+require('dotenv').config();
 const aws = require('aws-sdk');
 const fs = require('fs');
-const productModel = require('../src/../model/product.model');
-require('dotenv').config();
+
 
 exports.createProduct = async (req, res) => {
-    aws.config.setPromisesDependency();
-    aws.config.update({
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
-      region: process.env.AWS_S3_REGION
-    });
-    const s3 = new aws.S3();
-    var params = {
-      ACL: 'public-read',
-      Bucket: process.env.AWS_S3_BUCKET,
-      Body: fs.createReadStream(req.file.path),
-      Key: `products/${req.file.originalname}`
-    };
-  
-    s3.upload(params, (err, data) => {
-      if (err) {
-        console.log('Error occured while trying to upload to S3 bucket', err);
-      }
-  
-      if (data) {
-        fs.unlinkSync(req.file.path); // Empty temp folder
-        const locationUrl = data.Location;
-        let newProduct = new productModel({ ...req.body, productImage: locationUrl });
-        newProduct
-          .save()
-          .then(product => {
-            res.json({ message: 'Product added successfully', product });
-          })
-          .catch(err => {
-            console.log('Error occured while trying to save to DB');
-          });
-      }
-    });
-  }
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+    region: process.env.AWS_S3_REGION
+  });
+  const s3 = new aws.S3();
+  var params = {
+    ACL: 'public-read',
+    Bucket: process.env.AWS_S3_BUCKET,
+    Body: fs.createReadStream(req.file.path),
+    Key: `products/${req.file.originalname}`
+  };
 
-
-exports.getProducts = async (req, res, next) => {
-    try {
-        const products = await productModel.find();
-        res.json({ status: true, success: products });
-    } catch (error) {
-        next(error);
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.log('Error occured while trying to upload to S3 bucket', err);
     }
 
-}
-
-exports.getProductbyId = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const productData = await productModel.findById(id);
-        res.json({ status: true, success: productData });
-    } catch (error) {
-        next(error);
+    if (data) {
+      fs.unlinkSync(req.file.path); // Empty temp folder
+      const locationUrl = data.Location;
+      let newProduct = new Product({ ...req.body, productImage: locationUrl });
+      newProduct
+        .save()
+        .then(product => {
+          res.json({ message: 'Product added successfully', product });
+        })
+        .catch(err => {
+          console.log('Error occured while trying to save to DB');
+        });
     }
+  });
 }
 
-exports.getProductsByCategory = async (req, res, next) => {
+
+exports.updateProduct = async (req, res) => {
     try {
-        const { productCat } = req.params;
-        const products = await productModel.find({ productCat });
-        res.json({ status: true, success: products });
-    } catch (error) {
-        next(error);
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body,
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedProduct);
+    } catch (err) {
+        res.status(500).json(err);
     }
 };
-// Function to delete a product by ID
-exports.deleteProduct = async (req, res, next) => {
-    try {
-        // Extract the product ID from the query parameters
-        const { id } = req.body;
-        // Delete the product
-        const deletedProduct = await productModel.findOneAndDelete({ _id: id });
-        res.json({ status: true, success: deletedProduct });
-    } catch (error) {
-        next(error);
-    }
-}
 
+exports.deleteProduct = async (req, res) => {
+    try {
+        await Product.findByIdAndDelete(req.params.id);
+        res.status(200).json("Product has been deleted...");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
+exports.findProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        res.status(200).json(product);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
+exports.getAllProducts = async (req, res) => {
+    const qNew = req.query.new;
+    const qCategory = req.query.category;
+    try {
+        let products;
+
+        if (qNew) {
+            products = await Product.find().sort({ createdAt: -1 }).limit(1);
+        } else if (qCategory) {
+            products = await Product.find({
+                productCategory: {
+                    $in: [qCategory],
+                },
+            });
+        } else {
+            products = await Product.find();
+        }
+
+        res.status(200).json(products);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
+exports.getProductStats = async (req, res) => {
+    const date = new Date();
+    const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+
+    try {
+        const data = await Product.aggregate([
+            { $match: { createdAt: { $gte: lastYear } } },
+            {
+                $project: {
+                    month: { $month: "$createdAt" },
+                },
+            },
+            {
+                $group: {
+                    _id: "$month",
+                    total: { $sum: 1 },
+                },
+            },
+        ]);
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
