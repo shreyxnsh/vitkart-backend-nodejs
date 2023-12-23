@@ -1,87 +1,62 @@
-const CartModel = require('../src/../model/cart.model'); // You'll need to create a cart model
-const ProductModel = require('../src/../model/product.model'); // Import the product model
-const mongoose = require('mongoose');
+const Cart = require("../model/cart.model");
 
-// Add product to cart
-exports.addToCart = async (req, res) => {
-    mongoose.set('bufferCommands', false);
+exports.createCart = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
-        let cart = await CartModel.findOne({ userId: req.user._id });
-        if (!cart) {
-            cart = new CartModel({ userId: req.user._id });
+        // Check if a cart already exists for the user
+        const existingCart = await Cart.findOne({ userId: req.body.userId });
+
+        if (existingCart) {
+            // If a cart exists, respond with a message
+            return res.status(400).json({ message: "Cart already created!" });
         }
-        const product = await ProductModel.findById(productId);
-        if (!product) {
-            return res.status(404).send('Product not found');
-        }
-        cart.items.push({ productId: product._id, quantity: quantity });
-        await cart.save();
-        res.status(200).send('Product added to cart');
+
+        // If no cart exists, create a new one
+        const newCart = new Cart(req.body);
+        const savedCart = await newCart.save();
+        res.status(200).json(savedCart);
     } catch (error) {
-        res.status(500).send('Server error');
+        res.status(500).json(error);
     }
 };
 
-// Update product quantity in cart
 exports.updateCart = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
-        const cart = await CartModel.findOne({ userId: req.user._id });
-        const item = cart.items.find(i => i.productId.toString() === productId);
-        if (!item) {
-            return res.status(404).send('Product not found in cart');
-        }
-        item.quantity = quantity;
-        await cart.save();
-        res.status(200).send('Cart updated');
-    } catch (error) {
-        res.status(500).send('Server error');
+        const updatedCart = await Cart.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body,
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedCart);
+    } catch (err) {
+        res.status(500).json(err);
     }
 };
 
-// View all products in cart
-exports.viewCart = async (req, res) => {
+exports.deleteCartItem = async (req, res) => {
     try {
-        const cart = await CartModel.findOne({ userId: req.user._id });
-        res.status(200).send(cart);
-    } catch (error) {
-        res.status(500).send('Server error');
+        await Cart.findByIdAndDelete(req.params.id);
+        res.status(200).json("Cart item has been deleted...");
+    } catch (err) {
+        res.status(500).json(err);
     }
 };
 
-// Delete product from cart
-exports.deleteFromCart = async (req, res) => {
+exports.findUserCart = async (req, res) => {
     try {
-        const { productId } = req.body;
-        const cart = await CartModel.findOne({ userId: req.user._id });
-        const itemIndex = cart.items.findIndex(i => i.productId.toString() === productId);
-        if (itemIndex === -1) {
-            return res.status(404).send('Product not found in cart');
-        }
-        cart.items.splice(itemIndex, 1);
-        await cart.save();
-        res.status(200).send('Product removed from cart');
-    } catch (error) {
-        res.status(500).send('Server error');
+        const cart = await Cart.findOne({ userId: req.params.userId });
+        res.status(200).json(cart);
+    } catch (err) {
+        res.status(500).json(err);
     }
 };
 
-// View total value of cart
-exports.viewCartValue = async (req, res) => {
+exports.getAllCarts = async (req, res) => {
     try {
-        const cart = await CartModel.findOne({ userId: req.user._id });
-        let totalValue = 0;
-        for (let item of cart.items) {
-            const product = await ProductModel.findById(item.productId);
-            if (!product) {
-                return res.status(404).send('Product not found');
-            }
-            totalValue += product.price * item.quantity;
-        }
-        res.status(200).send({ totalValue });
-    } catch (error) {
-        res.status(500).send('Server error');
+        const carts = await Cart.find();
+        res.status(200).json(carts);
+    } catch (err) {
+        res.status(500).json(err);
     }
 };
-
