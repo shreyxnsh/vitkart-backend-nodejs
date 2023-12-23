@@ -6,9 +6,14 @@ const UserSchema = new mongoose.Schema(
         username: {
             type: String,
             required: true,
-            unique: true
+            
         },   
         email: {
+            type: String,
+            required: true,
+            unique: true
+        },   
+        regNo: {
             type: String,
             required: true,
             unique: true
@@ -16,6 +21,19 @@ const UserSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
+        }, 
+        contact: {
+            type: Number,
+            required: true,
+            unique: true
+        }, 
+        joiningYear: {
+            type: Number,
+            required: true,
+        },
+        source: {
+            type: String,
+           
         },
         isAdmin: {
             type: Boolean,
