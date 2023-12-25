@@ -14,6 +14,10 @@ const emailVerificationRouter = require('./src/routers/emailVerification.router'
 const fpRouter = require('./src/routers/fp.router');
 const otpRouter = require('./src/routers/otp.router');
 
+
+
+
+
 // body parser is used to get data which comes in the body 
 app.use(bodyParser.json());
 
