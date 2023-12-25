@@ -1,11 +1,17 @@
-const router = require('express').Router();
+const router = require("express").Router();
+const productController = require("../controller/product.controller");
+const { verifyTokenAndAdmin } = require("../middleware/verifyToken");
 const multer = require('multer');
-const productController = require('../src/../controller/product.controller');
 
-// create a product
+
+//create category
 const { createProduct } = productController;
+
+// CREATE
+// router.post("/", verifyTokenAndAdmin, productController.createProduct);
+
 router
-  .route('/createProduct')
+  .route('/createProduct', verifyTokenAndAdmin)
   .post(
     multer({ dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } }).single(
       'productImage'
@@ -13,14 +19,19 @@ router
     createProduct
   );
 
-  // get all products
-router.get('/getProducts', productController.getProducts);
-// get products by their id 
-router.get('/getProductbyId/:id', productController.getProductbyId);
-// get products by their category
-router.get('/getProductbyCat/:productCat', productController.getProductsByCategory);
+// UPDATE
+router.put("/:id", verifyTokenAndAdmin, productController.updateProduct);
 
-// delete todo task of a user
-router.delete('/deleteproduct', productController.deleteProduct );
+// DELETE
+router.delete("/:id", verifyTokenAndAdmin, productController.deleteProduct);
+
+// GET PRODUCT
+router.get("/find/:id", productController.findProductById);
+
+// GET ALL PRODUCTS
+router.get("/getproduct", productController.getAllProducts);
+
+// GET PRODUCT STATS
+router.get("/stats", verifyTokenAndAdmin, productController.getProductStats);
 
 module.exports = router;
