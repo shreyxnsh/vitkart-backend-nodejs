@@ -8,8 +8,11 @@ const categoryRouter = require('./src/routers/category.router');
 const productRouter = require('./src/routers/product.router');
 const cartRouter = require('./src/routers/cart.router');
 const kycRouter = require('./src/routers/kyc.router');
-const authRouter = require('./src/routers/auth.router');
+
 const orderRouter = require('./src/routers/order.router');
+const emailVerificationRouter = require('./src/routers/emailVerification.router');
+const fpRouter = require('./src/routers/fp.router');
+const otpRouter = require('./src/routers/otp.router');
 
 // body parser is used to get data which comes in the body 
 app.use(bodyParser.json());
@@ -23,7 +26,11 @@ app.use('/api/v1/product', productRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1', kycRouter);
 app.use('/api/v1/user', userRouter);
-app.use('/api/v1/auth', authRouter);
+
 app.use('/api/v1/order', orderRouter);
+
+app.use('/api/v1/emailVerification', emailVerificationRouter);
+app.use('/api/v1/fp', fpRouter);
+app.use('/api/v1/otp', otpRouter);
 
 module.exports = app;
