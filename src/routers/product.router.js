@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const productController = require("../controller/product.controller");
-const { verifyToken } = require("../middleware/verifyToken");
+const { verifyToken, verifyTokenAndAdmin } = require("../middleware/verifyToken");
 const multer = require('multer');
 
 
@@ -32,6 +32,6 @@ router.get("/find/:id", productController.findProductById);
 router.get("/getproduct", productController.getAllProducts);
 
 // GET PRODUCT STATS
-router.get("/stats", verifyToken, productController.getProductStats);
+router.get("/stats", verifyTokenAndAdmin, productController.getProductStats);
 
 module.exports = router;

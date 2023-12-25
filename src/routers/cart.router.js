@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const cartController = require("../controller/cart.controller");
-const { verifyToken} = require("../middleware/verifyToken");
+const { verifyToken, verifyTokenAndAdmin} = require("../middleware/verifyToken");
 
 // CREATE
 router.post("/", verifyToken, cartController.createCart);
@@ -15,6 +15,6 @@ router.delete("/:id", verifyToken, cartController.deleteCartItem);
 router.get("/find/:userId", verifyToken, cartController.findUserCart);
 
 // GET ALL CARTS
-router.get("/", verifyToken, cartController.getAllCarts);
+router.get("/", verifyTokenAndAdmin, cartController.getAllCarts);
 
 module.exports = router;
