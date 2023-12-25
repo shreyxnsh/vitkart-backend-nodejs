@@ -4,7 +4,7 @@ const app = express();
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const userRouter = require('./src/routers/user.router');
-const categoryRouter = require('./src/routers/category.router');
+
 const productRouter = require('./src/routers/product.router');
 const cartRouter = require('./src/routers/cart.router');
 const kycRouter = require('./src/routers/kyc.router');
@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 // register function of the controller will be called
 // this function will use the services of user registration
 // app.use('/api/v1', userRouter);
-app.use('/api/v1', categoryRouter);
+
 app.use('/api/v1/product', productRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1', kycRouter);
