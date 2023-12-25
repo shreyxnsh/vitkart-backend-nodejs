@@ -1,20 +1,22 @@
-const router = require("express").Router();
-const userController = require("../controller/user.controller");
-const { verifyTokenAndAuthorization, verifyTokenAndAdmin } = require("../middleware/verifyToken");
+const express = require('express');
+const router = express.Router();
+const { verifyToken } = require("../middleware/verifyToken");
+const userController = require('../controller/user.controller');
 
-// UPDATE
-router.put("/:id", verifyTokenAndAuthorization, userController.updateUser);
+// protected route
+router.get("/private_data", verifyToken, (req, res) => {
+  res 
+    .status(200)
+    .send(`You are logged in using ${req.currentUser.userEmail}`);
 
-// DELETE
-router.delete("/:id", verifyTokenAndAuthorization, userController.deleteUser);
+});
 
-// GET USER
-router.get("/find/:id", verifyTokenAndAuthorization, userController.findUserById);
 
-// GET ALL USERS
-router.get("/allusers", verifyTokenAndAdmin, userController.getAllUsers);
+// Sign In and Sign Up
 
-// GET USER STATS
-router.get("/stats", verifyTokenAndAdmin, userController.getUserStats);
+router.post('/createNewAccount', userController.signUp);
+router.post('/signIn', userController.signIn);
+
 
 module.exports = router;
+

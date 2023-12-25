@@ -3,41 +3,53 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema(
     {
-        username: {
+        userName: {
             type: String,
-            required: true,
-            
-        },   
-        email: {
-            type: String,
-            required: true,
-            unique: true
-        },   
-        regNo: {
-            type: String,
-            required: true,
-            unique: true
-        }, 
-        password: {
-            type: String,
-            required: true,
-        }, 
-        contact: {
-            type: Number,
-            required: true,
-            unique: true
-        }, 
-        joiningYear: {
-            type: Number,
             required: true,
         },
-        source: {
+        userRegID: {
             type: String,
-           
+            required: true,
+            unique: true,
+        },
+        userEmail: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        userGender: {
+            type: String,
+            required: true,
+        },
+        userPassword: {
+            type: String,
+            required: true,
+        },
+        token: {
+            type: String,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
         },
         isAdmin: {
             type: Boolean,
             default: false
+        },
+    
+        isClubAdmin: {
+            type: Boolean,
+            default: false,
+        },
+    
+        userBatch: {
+            type: String,
+        },
+        userBirthDate: {
+            type: String,
+        },
+        userContactNum: {
+            type: String,
         },
         
     },
