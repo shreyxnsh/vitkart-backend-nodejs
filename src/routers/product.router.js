@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const productController = require("../controller/product.controller");
-const { verifyTokenAndAdmin } = require("../middleware/verifyToken");
+const { verifyToken } = require("../middleware/verifyToken");
 const multer = require('multer');
 
 
@@ -8,10 +8,10 @@ const multer = require('multer');
 const { createProduct } = productController;
 
 // CREATE
-// router.post("/", verifyTokenAndAdmin, productController.createProduct);
+// router.post("/", verifyToken, productController.createProduct);
 
 router
-  .route('/createProduct', verifyTokenAndAdmin)
+  .route('/createProduct', verifyToken)
   .post(
     multer({ dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } }).single(
       'productImage'
@@ -20,10 +20,10 @@ router
   );
 
 // UPDATE
-router.put("/:id", verifyTokenAndAdmin, productController.updateProduct);
+router.put("/:id", verifyToken, productController.updateProduct);
 
 // DELETE
-router.delete("/:id", verifyTokenAndAdmin, productController.deleteProduct);
+router.delete("/:id", verifyToken, productController.deleteProduct);
 
 // GET PRODUCT
 router.get("/find/:id", productController.findProductById);
@@ -32,6 +32,6 @@ router.get("/find/:id", productController.findProductById);
 router.get("/getproduct", productController.getAllProducts);
 
 // GET PRODUCT STATS
-router.get("/stats", verifyTokenAndAdmin, productController.getProductStats);
+router.get("/stats", verifyToken, productController.getProductStats);
 
 module.exports = router;

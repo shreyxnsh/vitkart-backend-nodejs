@@ -1,23 +1,23 @@
 const router = require("express").Router();
 const orderController = require("../controller/order.controller");
-const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require("../middleware/verifyToken");
+const { verifyToken } = require("../middleware/verifyToken");
 
 // CREATE
 router.post("/", verifyToken, orderController.createOrder);
 
 // UPDATE
-router.put("/:id", verifyTokenAndAdmin, orderController.updateOrder);
+router.put("/:id", verifyToken, orderController.updateOrder);
 
 // DELETE
-router.delete("/:id", verifyTokenAndAdmin, orderController.deleteOrder);
+router.delete("/:id", verifyToken, orderController.deleteOrder);
 
 // GET USER ORDERS
-router.get("/find/:userId", verifyTokenAndAuthorization, orderController.findOrdersByUserId);
+router.get("/find/:userId", verifyToken, orderController.findOrdersByUserId);
 
 // GET ALL ORDERS
-router.get("/", verifyTokenAndAdmin, orderController.getAllOrders);
+router.get("/", verifyToken, orderController.getAllOrders);
 
 // GET MONTHLY INCOME
-router.get("/income", verifyTokenAndAdmin, orderController.getMonthlyIncome);
+router.get("/income", verifyToken, orderController.getMonthlyIncome);
 
 module.exports = router;
