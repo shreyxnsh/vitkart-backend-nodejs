@@ -20,6 +20,11 @@ app.get('/', (req, res)=>{
     res.send("VITKART - Ecommerce for VIT Bhopal");
 });
 
+// get request for route
+app.get('/healthcheck', (req, res)=>{
+    res.send("sab changa si");
+});
+
 app.listen(port, ()=>{
     console.log('Server Listening on port http://localhost:' + port);
 

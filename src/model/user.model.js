@@ -17,10 +17,6 @@ const UserSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        userGender: {
-            type: String,
-            required: true,
-        },
         userPassword: {
             type: String,
             required: true,
@@ -49,7 +45,7 @@ const UserSchema = new mongoose.Schema(
             type: String,
         },
         userContactNum: {
-            type: String,
+            type: Number,
         },
         
     },

@@ -87,7 +87,7 @@ exports.signIn = async (req, res) => {
 
         const authenticatedUser = await authenticateUser({ userEmail, userPassword});
 
-        res.status(200).json({message: 'SignIn successful' , authenticatedUser });
+        res.status(200).json({status:true , message: 'SignIn successful' , authenticatedUser });
 
     } catch (error){
         res.status(400).send(error.message);
@@ -117,7 +117,7 @@ exports.signUp = async (req, res) => {
       const validationErrors = [];
   
       // Check for empty input fields
-      if (!trimmedUserName || !trimmedUserEmail || !trimmedUserRegID || !trimmedUserGender || !trimmedUserPassword ) {
+      if (!trimmedUserName || !trimmedUserEmail || !trimmedUserRegID  || !trimmedUserPassword ) {
         validationErrors.push('Empty input fields!');
       }
   
