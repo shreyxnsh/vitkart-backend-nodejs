@@ -17,6 +17,9 @@ const UserSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        userGender: {
+            type: String,
+        },
         userPassword: {
             type: String,
             required: true,
@@ -44,7 +47,7 @@ const UserSchema = new mongoose.Schema(
         userBirthDate: {
             type: String,
         },
-        userContactNum: {
+        userContact: {
             type: Number,
         },
         
