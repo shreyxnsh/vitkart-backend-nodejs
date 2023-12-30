@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const UserSchema = new mongoose.Schema(
     {
         userName: {
@@ -19,6 +18,7 @@ const UserSchema = new mongoose.Schema(
         },
         userGender: {
             type: String,
+            required: true,
         },
         userPassword: {
             type: String,
@@ -47,14 +47,11 @@ const UserSchema = new mongoose.Schema(
         userBirthDate: {
             type: String,
         },
-        userContact: {
-            type: Number,
+        userContactNum: {
+            type: String,
         },
-        
-    },
-    {
-        timestamps : true
     },
 );
 
-module.exports = mongoose.model('User', UserSchema);
+// Set the timestamps option when creating the model
+module.exports = mongoose.model('User', UserSchema, 'users', { timestamps: true });
