@@ -173,12 +173,6 @@ exports.signUp = async (req, res) => {
       validationErrors.push('Invalid user batch! It must be a 4-digit number.')
     }
 
-    if (
-      trimmedUserBirthDate &&
-      !/^\d{4}-\d{2}-\d{2}$/.test(trimmedUserBirthDate)
-    ) {
-      validationErrors.push('Invalid user birth date format!')
-    }
 
     if (trimmedUserContact && !/^[0-9]{10}$/.test(trimmedUserContact)) {
       validationErrors.push('Invalid user contact number format!')
