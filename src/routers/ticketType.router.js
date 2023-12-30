@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const ticketTypeController = require('../controllers/ticketType.controller');
+const ticketTypeController = require('../controller/ticketType.controller');
 
 
 router.post('/createticketType', ticketTypeController.createTicketType);

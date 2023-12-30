@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const TicketController = require('../controllers/ticket.controller');
+const TicketController = require('../controller/ticket.controller');
 
-router.post('/createNewTicket', ticketController.createTicket);
+router.post('/createNewTicket', TicketController.createTicket);
 router.post('/createNewTicket', TicketController.createTicket);
 router.get('/getTicket', TicketController.getTickets);
 // updateOrder updates the orderID 

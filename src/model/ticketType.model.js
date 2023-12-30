@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const db = require('../config/database');
 
 const { Schema } = mongoose;
 
@@ -42,6 +41,6 @@ const ticketTypeSchema = new Schema({
 
 ticketTypeSchema.index({ event: 1, type: 1 }, { unique: true });
 
-const TicketTypeModel = db.model('TicketType', ticketTypeSchema);
+const TicketTypeModel = mongoose.model('TicketType', ticketTypeSchema);
 
 module.exports = TicketTypeModel;

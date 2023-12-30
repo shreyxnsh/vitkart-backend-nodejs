@@ -1,5 +1,5 @@
-const EventModel = require('../models/event.model');
-const TicketModel = require('../models/ticketType.model');
+const EventModel = require('../model/event.model');
+const TicketModel = require('../model/ticketType.model');
 const mongoose = require('mongoose');
 
 

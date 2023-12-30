@@ -1,6 +1,6 @@
-const EventModel = require('../models/event.model');
-const TicketTypeModel = require('../models/ticketType.model');
-const TicketModel = require('../models/ticket.model');
+const EventModel = require('../model/event.model');
+const TicketTypeModel = require('../model/ticketType.model');
+const TicketModel = require('../model/ticket.model');
 
 exports.createTicketType = async (req, res) => {
     try {

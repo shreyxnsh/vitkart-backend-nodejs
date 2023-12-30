@@ -1,7 +1,7 @@
-const TicketModel = require('../models/ticket.model');
-const UserModel = require('../models/user.model');
-const EventModel = require('../models/event.model');
-const TicketTypeModel = require('../models/ticketType.model');
+const TicketModel = require('../model/ticket.model');
+const UserModel = require('../model/user.model');
+const EventModel = require('../model/event.model');
+const TicketTypeModel = require('../model/ticketType.model');
 const crypto = require('crypto');
 
 exports.createTicket = async (req, res) => {

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const db = require('../config/database');
 const userModel = require('./user.model');
 const eventModel = require('./event.model');
 
@@ -69,7 +68,7 @@ const ticketSchema = new Schema({
 ticketSchema.index({ 'user': 1, 'event': 1 }, { unique: true });
 
 // Create a model for the Order collection in the MongoDB database
-const TicketModel = db.model('ticket', ticketSchema);
+const TicketModel = mongoose.model('ticket', ticketSchema);
 
 // Export the orderModel for use in other files/modules
 module.exports = TicketModel;
