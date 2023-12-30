@@ -29,6 +29,18 @@ const ProductSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        isPopular: {
+            type: Boolean,
+            default: false
+        },
+        sellerName: {
+            type: String,
+            required: true,
+        },
+        productStatus: {
+            type: String,
+            default: "pending"
+        },
         
     },
     {
