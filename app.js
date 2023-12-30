@@ -14,6 +14,9 @@ const emailVerificationRouter = require('./src/routers/emailVerification.router'
 const fpRouter = require('./src/routers/fp.router');
 const otpRouter = require('./src/routers/otp.router');
 
+const ticketRouter = require('./src/routers/ticket.router');
+const eventRouter = require('./src/routers/event.router');
+const ticketTypeRouter = require('./src/routers/ticketType.router');
 
 
 
@@ -36,5 +39,10 @@ app.use('/api/v1/order', orderRouter);
 app.use('/api/v1/emailVerification', emailVerificationRouter);
 app.use('/api/v1/fp', fpRouter);
 app.use('/api/v1/otp', otpRouter);
+
+app.use('/api/v1/ticket', ticketRouter);
+app.use('/api/v1/event', eventRouter);
+app.use('/api/v1/ticketType', ticketTypeRouter);
+
 
 module.exports = app;
