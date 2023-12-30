@@ -31,10 +31,11 @@ exports.createProduct = async (req, res) => {
       newProduct
         .save()
         .then(product => {
-          res.json({ message: 'Product added successfully', product });
+          res.json({status: true, message: 'Product added successfully', product });
         })
         .catch(err => {
           console.log('Error occured while trying to save to DB');
+          return res.status(500).json({ status: false, message: 'Internal Server Error' });
         });
     }
   });
@@ -50,27 +51,29 @@ exports.updateProduct = async (req, res) => {
             },
             { new: true }
         );
-        res.status(200).json(updatedProduct);
+        res.status(200).json({ status: true, product: updatedProduct });
+        console.log('Error in line 55, product controller')
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
 
 exports.deleteProduct = async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
-        res.status(200).json("Product has been deleted...");
+        res.status(200).json({ status: true, message: "Product has been deleted..." });
     } catch (err) {
-        res.status(500).json(err);
+        console.log('Error in line 65, product controller')
+        res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
 
 exports.findProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
-        res.status(200).json(product);
+        res.status(200).json({ status: true, product });
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
 
@@ -92,9 +95,9 @@ exports.getAllProducts = async (req, res) => {
             products = await Product.find();
         }
 
-        res.status(200).json(products);
+        res.status(200).json({ status: true, products});
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
 
@@ -117,8 +120,8 @@ exports.getProductStats = async (req, res) => {
                 },
             },
         ]);
-        res.status(200).json(data);
+        res.status(200).json({ status: true, data });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };

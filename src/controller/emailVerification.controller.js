@@ -3,11 +3,11 @@ const { sendOTP, verifyOTP, deleteOTP } = require("./otp.controller");
 
 
 // Verify user email OTP
-const verifyUserEmail = async ({userEmail, otp}) => {
+const updateVerification = async ({userEmail, otp}) => {
     try{ 
         const validOTP = await verifyOTP({ userEmail, otp });
         if (!validOTP) {
-            throw Error('Invalid OTP');
+            return 'Invalid OTP';
         }
         // Update user record to show verified
         await User.updateOne({ userEmail}, { isVerified: true });
@@ -18,7 +18,7 @@ const verifyUserEmail = async ({userEmail, otp}) => {
 
     } catch (error) {
         console.log("Unable: Email Verification");
-        throw error;
+        return 'Error in email verification';
 
 
     }
@@ -71,14 +71,21 @@ exports.verifyEmail = async (req, res) => {
     try{ 
         let { userEmail, otp} = req.body;
 
-        if (!(userEmail && otp)) throw Error("Please give all the details");
+        if (!(userEmail && otp)) {
+            return res.status(400).json({ status: false, message: "Please provide all the details" });
+        }
 
-        await verifyUserEmail({ userEmail, otp })
-        res.status(200).json({ userEmail, isVerified: true });
+        const verificationResult = await updateVerification({ userEmail, otp });
+
+        if (verificationResult) {
+            return res.status(400).json({ status: false, message: verificationResult });
+        }
+
+        res.status(200).json({ status: true,userEmail, isVerified: true });
 
     } catch (error) {
         console.log("Error in emailVerificationRoutes");
-        res.status(400).send(error.message);
+        res.status(500).json({ status: false, message: "Internal Server Error" });
 
     }
 };

@@ -2,7 +2,7 @@ const User = require('../model/user.model')
 const { hashData, verifyHashedData } = require('../util/hashData')
 const createToken = require('../util/createToken')
 const {
-  sendVerificationOTPEmail,
+  sendVerificationOTPEmail
 } = require('../controller/emailVerification.controller')
 
 // Authenticate User
