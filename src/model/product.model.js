@@ -37,6 +37,9 @@ const ProductSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        sellerContact: {
+            type: String,
+        },
         productStatus: {
             type: String,
             default: "pending"
