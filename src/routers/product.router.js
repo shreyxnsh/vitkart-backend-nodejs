@@ -8,7 +8,9 @@ const multer = require('multer');
 const { createProduct } = productController;
 
 // CREATE
-// router.post("/", verifyToken, productController.createProduct);
+// router.post("/", verifyToken, productController.createProduct);  
+
+
 
 router
   .route('/createProduct', verifyToken)
