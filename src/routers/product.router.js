@@ -8,14 +8,16 @@ const multer = require('multer');
 const { createProduct } = productController;
 
 // CREATE
-// router.post("/", verifyToken, productController.createProduct);
+// router.post("/", verifyToken, productController.createProduct);  
+
+
 
 router
   .route('/createProduct', verifyToken)
   .post(
-    multer({ dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } }).single(
-      'productImage'
-    ),
+    multer({ dest: 'temp/', limits: { fieldSize: 8 * 1024 * 1024 } }).array('productImages', 5),
+// 'productImages' is the field name in the form, and 5 is the maximum number of files allowed
+
     createProduct
   );
 

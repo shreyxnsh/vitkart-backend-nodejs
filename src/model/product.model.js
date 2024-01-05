@@ -13,8 +13,8 @@ const ProductSchema = new mongoose.Schema(
             required: true,
 
         }, 
-        productImage: {
-            type: String,
+        productImages: {
+            type: [String],
             required: true,
         },
         productCategory: {
@@ -36,6 +36,9 @@ const ProductSchema = new mongoose.Schema(
         sellerName: {
             type: String,
             required: true,
+        },
+        sellerContact: {
+            type: String,
         },
         productStatus: {
             type: String,

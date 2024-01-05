@@ -12,33 +12,33 @@ exports.createProduct = async (req, res) => {
     region: process.env.AWS_S3_REGION
   });
   const s3 = new aws.S3();
-  var params = {
+  const paramsArray = req.files.map((file, index) => ({
     ACL: 'public-read',
     Bucket: process.env.AWS_S3_BUCKET,
-    Body: fs.createReadStream(req.file.path),
-    Key: `products/${req.file.originalname}`
-  };
+    Body: fs.createReadStream(file.path),
+    Key: `products/${file.originalname}`
+}));
 
-  s3.upload(params, (err, data) => {
-    if (err) {
-      console.log('Error occured while trying to upload to S3 bucket', err);
-    }
+const uploadPromises = paramsArray.map(params => s3.upload(params).promise());
 
-    if (data) {
-      fs.unlinkSync(req.file.path); // Empty temp folder
-      const locationUrl = data.Location;
-      let newProduct = new Product({ ...req.body, productImage: locationUrl });
-      newProduct
-        .save()
-        .then(product => {
-          res.json({status: true, message: 'Product added successfully', product });
-        })
-        .catch(err => {
-          console.log('Error occured while trying to save to DB');
-          return res.status(500).json({ status: false, message: 'Internal Server Error' });
-        });
-    }
-  });
+Promise.all(uploadPromises)
+    .then(dataArray => {
+        // Clean up temp files
+        req.files.forEach(file => fs.unlinkSync(file.path));
+
+        // Extract the S3 locations for each file
+        const productImagess = dataArray.map(data => data.Location);
+
+        let newProduct = new Product({ ...req.body, productImages: productImagess });
+        return newProduct.save();
+    })
+    .then(product => {
+        res.json({ status: true, message: 'Product added successfully', product });
+    })
+    .catch(err => {
+        console.log('Error occurred while trying to upload to S3 bucket or save to DB', err);
+        return res.status(500).json({ status: false, message: 'Internal Server Error' });
+    });
 }
 
 
@@ -80,6 +80,7 @@ exports.findProductById = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
     const qNew = req.query.new;
     const qCategory = req.query.category;
+
     try {
         let products;
 
@@ -90,16 +91,17 @@ exports.getAllProducts = async (req, res) => {
                 productCategory: {
                     $in: [qCategory],
                 },
-            });
+            }).sort({ createdAt: -1 }); // Sort by createdAt in descending order
         } else {
-            products = await Product.find();
+            products = await Product.find().sort({ createdAt: -1 }); // Sort by createdAt in descending order
         }
 
-        res.status(200).json({ status: true, products});
+        res.status(200).json({ status: true, products });
     } catch (err) {
         res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
+
 
 exports.getProductStats = async (req, res) => {
     const date = new Date();
