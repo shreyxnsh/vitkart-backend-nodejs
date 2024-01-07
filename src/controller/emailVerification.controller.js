@@ -25,7 +25,7 @@ const updateVerification = async ({userEmail, otp}) => {
 };
 
 // Send OTP verification Emails
-exports.sendVerificationOTPEmail = async (userEmail) => {
+exports.sendVerificationOTPEmail = async (userName, userEmail) => {
     try{ 
         // Check if the email account exists
         const exisitingUser = await User.findOne({ userEmail });
@@ -34,6 +34,7 @@ exports.sendVerificationOTPEmail = async (userEmail) => {
         }
 
         const otpDetails = {
+            userName,
             userEmail,
             otpSubject: "Email Verification | @VITKART ",
             otpMessage: "Verify your email with the code below",

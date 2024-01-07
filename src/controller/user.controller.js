@@ -196,7 +196,7 @@ exports.signUp = async (req, res) => {
       userContactNum: trimmedUserContact,
     })
 
-    await sendVerificationOTPEmail(userEmail)
+    await sendVerificationOTPEmail(userName, userEmail)
     res.status(200).json({ message: 'Signup successful', user: newUser })
     console.log('Verification Email Sent | Line 150')
   } catch (error) {

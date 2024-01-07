@@ -46,9 +46,9 @@ exports.verifyOTP = async ({ userEmail, otp }) => {
 };
 
 
-exports.sendOTP = async ({ userEmail, otpSubject, otpMessage, otpDuration = 1 }) => {
+exports.sendOTP = async ({userName, userEmail, otpSubject, otpMessage, otpDuration = 1 }) => {
     try {
-        if (!(userEmail && otpSubject && otpMessage)) {
+        if (!(userName, userEmail && otpSubject && otpMessage)) {
             throw Error("Provide values for email, subject, message");
         }
         // Clear old record, for creating a new OTP
@@ -60,15 +60,34 @@ exports.sendOTP = async ({ userEmail, otpSubject, otpMessage, otpDuration = 1 })
             from: AUTH_EMAIL,
             to: userEmail,
             subject: otpSubject,
-            html: `<p>${otpMessage}</p><p style="color:tomato; font-size:25px; letter-spacing:2px;"> <b> ${generatedOTP} </b></p>
-            <p><b> This code <b>expires in ${otpDuration} hour(s) </b></p>`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #333; text-align: center;">One-Time Password (OTP) for Your Account</h2>
+                    
+                    <p style="font-size: 16px; line-height: 1.5; color: #555;">Dear ${userName},</p>
+                    
+                    <p style="font-size: 18px; line-height: 1.5; color: #333;">Your One-Time Password (OTP) is:</p>
+                    
+                    <div style="background-color: #f5f5f5; padding: 15px; text-align: center; border-radius: 5px;">
+                        <p style="font-size: 25px; color: #333; letter-spacing: 2px; margin: 0;"><b>${generatedOTP}</b></p>
+                    </div>
+                    
+                    <p style="font-size: 16px; line-height: 1.5; color: #555;">This code expires in ${otpDuration} hour(s).</p>
+                    
+                    <p style="font-size: 16px; line-height: 1.5; color: #555;">If you did not request this code, please ignore this email.</p>
+                    
+                    <p style="font-size: 16px; line-height: 1.5; color: #555;">Best regards,<br>Team VITKART</p>
+                </div>
+            `,
         };
+        
         await sendEmail(mailOptions);
 
         // Hash and save OTP data
          const hashedOTP = await hashData(generatedOTP);
          console.log(hashedOTP)
          const newOTP = await new OTP({
+            userName,
             userEmail,
             otp: hashedOTP,
             createdAt: Date.now(),
