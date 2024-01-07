@@ -2,6 +2,7 @@ const TicketModel = require('../model/ticket.model');
 const UserModel = require('../model/user.model');
 const EventModel = require('../model/event.model');
 const TicketTypeModel = require('../model/ticketType.model');
+const createToken = require('../util/createToken')
 const crypto = require('crypto');
 
 exports.createTicket = async (req, res) => {
@@ -14,14 +15,14 @@ exports.createTicket = async (req, res) => {
 
         // If user or event is not found, return an error
         if (!user || !event) {
-            return res.status(404).json({ error: "User or Event not found" });
+            return res.status(404).json({ status:false, error: "User or Event not found" });
         }
 
         // Check if the user is already registered for the event
         const existingTicket = await TicketModel.findOne({ 'user._id': userID, 'event._id': eventID });
 
         if (existingTicket) {
-            return res.status(400).json({ error: "User is already registered for this event" });
+            return res.status(400).json({status:false,  error: "User is already registered for this event" });
         }
 
         // Find the ticket in the event's tickets array
@@ -35,12 +36,12 @@ exports.createTicket = async (req, res) => {
 
         // If the selected ticket is not found, return an error
         if (!selectedTicketType) {
-            return res.status(404).json({ error: "No ticket found!" });
+            return res.status(404).json({ status: false,  error: "No ticket found!" });
         }
 
         // Check if the selected ticket is still available
         if (selectedTicketType.availableQuantity <= 0) {
-            return res.status(400).json({ error: "Selected ticket is sold out" });
+            return res.status(400).json({ status: false, error: "Selected ticket is sold out" });
         }
 
         // Calculate the totalAmount based on the selected ticket price
@@ -62,7 +63,14 @@ exports.createTicket = async (req, res) => {
             },
         });
 
-
+        const tokenData = {
+            ticket: newTicket, // Add the newTicket data to the tokenData
+        }
+        
+        const ticketToken = await createToken(tokenData)
+        
+        // Assign user token
+        console.log(ticketToken)
 
         // Update the soldQuantity and availableQuantity for the selected ticket in the event
         selectedTicketType.soldQuantity += 1;
@@ -84,11 +92,11 @@ exports.createTicket = async (req, res) => {
         }
 
         // Return success response
-        res.status(201).json({ message: "Ticket created successfully", Ticket: newTicket });
+        res.status(201).json({ message: "Ticket created successfully", status: true,  Ticket: newTicket, ticketToken: ticketToken });
     } catch (error) {
         // Handle any errors that occur during the process
         console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ status: false, error: "Internal Server Error" });
     }
 };
 
