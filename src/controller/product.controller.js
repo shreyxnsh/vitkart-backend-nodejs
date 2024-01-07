@@ -80,6 +80,7 @@ exports.findProductById = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
     const qNew = req.query.new;
     const qCategory = req.query.category;
+    const qSeller = req.query.seller;
 
     try {
         let products;
@@ -90,6 +91,12 @@ exports.getAllProducts = async (req, res) => {
             products = await Product.find({
                 productCategory: {
                     $in: [qCategory],
+                },
+            }).sort({ createdAt: -1 }); // Sort by createdAt in descending order
+        } else if (qSeller) {
+            products = await Product.find({
+                sellerName: {
+                    $in: [qSeller],
                 },
             }).sort({ createdAt: -1 }); // Sort by createdAt in descending order
         } else {

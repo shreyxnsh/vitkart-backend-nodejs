@@ -40,6 +40,11 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        
+        isClubModerator: {
+            type: Boolean,
+            default: false,
+        },
     
         userBatch: {
             type: String,
