@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 exports.createTicket = async (req, res) => {
     try {
-        const { userID, eventID, ticketTypeId } = req.body;
+        const { userID, eventID, ticketTypeId, discountCoupon } = req.body;
 
         // Fetch user and event details based on the provided IDs
         const user = await UserModel.findById(userID);
@@ -30,7 +30,8 @@ exports.createTicket = async (req, res) => {
             event: eventID,
             availableQuantity: { $gt: 0 }, // Ensure available quantity is greater than 0
         });
-        
+
+        console.log(selectedTicketType.type, selectedTicketType.price, selectedTicketType.availableQuantity);
 
         // If the selected ticket is not found, return an error
         if (!selectedTicketType) {
@@ -51,8 +52,8 @@ exports.createTicket = async (req, res) => {
             event,
             totalAmount,
             discountCoupon,
-            selectedTicketTypeType: {
-                ticketType: selectedTicketType.ticketType,
+            selectedTicketType: {
+                type: selectedTicketType.type,
                 price: selectedTicketType.price,
                 availableQuantity: selectedTicketType.availableQuantity,
                 discountCoupon: selectedTicketType.discountCoupon,
@@ -60,6 +61,8 @@ exports.createTicket = async (req, res) => {
                 discountAmount: selectedTicketType.discountAmount,
             },
         });
+
+
 
         // Update the soldQuantity and availableQuantity for the selected ticket in the event
         selectedTicketType.soldQuantity += 1;

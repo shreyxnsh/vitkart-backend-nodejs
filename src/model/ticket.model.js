@@ -25,14 +25,13 @@ const ticketSchema = new Schema({
     appliedDiscount: {
         type: Number,
         default: 0,
-        required: false,
     },
     
     totalAmount: {
         type: Number,
         required: true,
     },
-    selectedType: {
+    selectedTicketType: {
         type: {
             type: String,
             required: true,
@@ -51,15 +50,12 @@ const ticketSchema = new Schema({
         },
         discountCoupon: {
             type: String,
-            required: false,
         },
         discountCouponLimit: {
             type: Number,
-            required: false,
         },
         discountAmount: {
             type: Number,
-            required: false,
         },
     },
 

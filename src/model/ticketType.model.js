@@ -27,15 +27,12 @@ const ticketTypeSchema = new Schema({
     },
     discountCoupon: {
         type: String,
-        required: false,
     },
     discountCouponLimit: {
         type: Number,
-        required: false,
     },
     discountAmount: {
         type: Number,
-        required: false,
     },
 }, { timestamps: true });
 

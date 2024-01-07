@@ -13,20 +13,20 @@ exports.createTicketType = async (req, res) => {
         console.log('Existing Event:', existingEvent);
 
         if (!existingEvent) {
-            return res.status(404).json({ error: 'Event not found' });
+            return res.status(404).json({ status: false, error: 'Event not found' });
         }
 
         // Check if a ticket with the same ticketType already exists for the given event
-        const existingTicketType = await TicketTypeModel.findOne({ 'ticketType': type, 'event': eventId });
+        const existingTicketType = await TicketTypeModel.findOne({ 'type': type, 'event': eventId });
 
         if (existingTicketType) {
-            return res.status(400).json({ error: "Ticket already exists" });
+            return res.status(400).json({ status: false, error: 'Ticket type already exists' });
         }
 
         // Associate the ticket with the specified event
         const newTicket = new TicketTypeModel({
             ...ticketData,
-            ticketType: type,
+            type: type,
             event: existingEvent._id,
         });
 
@@ -34,10 +34,11 @@ exports.createTicketType = async (req, res) => {
         const savedTicket = await newTicket.save();
 
         // Add the new ticket to the event's ticket array
-        existingEvent.eventTickets.push(savedTicket._id);
+        existingEvent.eventTicketTypes.push(savedTicket._id);
         await existingEvent.save();
 
         res.status(201).json({
+            status: true,
             message: 'Ticket Type created successfully',
             ticket: savedTicket,
         });
@@ -48,23 +49,27 @@ exports.createTicketType = async (req, res) => {
         if (error.name === 'ValidationError') {
             // Mongoose validation error
             res.status(400).json({
+                status: false,
                 error: 'Validation Error',
                 message: error.message,
             });
         } else if (error.name === 'MongoError' && error.code === 11000) {
             // Duplicate key error
             res.status(409).json({
+                status: false,
                 error: 'Conflict',
                 message: 'Duplicate key error. This ticket type already exists.',
             });
         } else {
             // General internal server error
             res.status(500).json({
+                status: false,
                 error: 'Internal Server Error',
             });
         }
     }
 };
+
 
 exports.getEventTicketTypes = async (req, res) => {
     try {
@@ -73,6 +78,7 @@ exports.getEventTicketTypes = async (req, res) => {
         // Check if eventId is provided
         if (!eventId) {
             return res.status(400).json({
+                status: false,
                 error: 'eventId parameter is required',
             });
         }
@@ -82,17 +88,20 @@ exports.getEventTicketTypes = async (req, res) => {
 
         if (!ticketTypes || ticketTypes.length === 0) {
             return res.status(404).json({
+                status: false,
                 error: 'No Ticket type Found for the specified event',
             });
         }
 
         res.json({
+            status: true,
             message: 'Ticket Types retrieved successfully',
             ticketTypes: tickets,
         });
     } catch (error) {
         console.error('Error getting ticket types:', error);
         res.status(500).json({
+            status: false,
             error: 'Internal Server Error',
         });
     }
@@ -107,18 +116,21 @@ exports.getTicketTypebyID = async (req, res) => {
 
         if (!ticketType) {
             return res.status(404).json({
+                status: false,
                 error: 'Ticket not found',
                 message: 'The requested ticket does not exist.',
             });
         }
 
         res.status(200).json({
+            status: true,
             message: 'Ticket retrieved successfully',
             ticketType: ticketType,
         });
     } catch (error) {
         console.error('Error getting ticcketType:', error);
         res.status(500).json({
+            status: false,
             error: 'Internal Server Error',
             message: 'An internal server error occurred while retrieving the ticketType.',
         });
@@ -144,19 +156,20 @@ exports.deleteTicketType = async (req, res) => {
             { new: true }
         );
         if (!deletedTicketTypeFromEvent){
-            return res.status(404).json({error: 'TicketType not found in event'})
+            return res.status(404).json({status: false, error: 'TicketType not found in event'})
         }
 
         if (!deletedTicketType) {
-            return res.status(404).json({ error: 'TicketType not found' });
+            return res.status(404).json({status: false, error: 'TicketType not found' });
         }
 
         res.status(200).json({
+            status: true,
             message: 'Ticket Type deleted from event and ticketType successfully',
             Ticket: deletedTicket,
         });
     } catch (error) {
         console.error('Error deleting ticketType :', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({status: false, error: 'Internal Server Error' });
     }
 };
