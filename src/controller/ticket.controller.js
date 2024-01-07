@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 exports.createTicket = async (req, res) => {
     try {
-        const { userID, eventID, ticketTypeId, discountCoupon } = req.body;
+        const { userID, eventID, ticketTypeId } = req.body;
 
         // Fetch user and event details based on the provided IDs
         const user = await UserModel.findById(userID);
