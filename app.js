@@ -7,7 +7,7 @@ const userRouter = require('./src/routers/user.router');
 
 const productRouter = require('./src/routers/product.router');
 const cartRouter = require('./src/routers/cart.router');
-const kycRouter = require('./src/routers/kyc.router');
+
 
 const orderRouter = require('./src/routers/order.router');
 const emailVerificationRouter = require('./src/routers/emailVerification.router');
@@ -31,7 +31,6 @@ app.use(bodyParser.json());
 
 app.use('/api/v1/product', productRouter);
 app.use('/api/v1/cart', cartRouter);
-app.use('/api/v1', kycRouter);
 app.use('/api/v1/user', userRouter);
 
 app.use('/api/v1/order', orderRouter);
