@@ -34,20 +34,40 @@ exports.createTicket = async (req, res) => {
 
         console.log(selectedTicketType.type, selectedTicketType.price, selectedTicketType.availableQuantity);
 
-        // If the selected ticket is not found, return an error
         if (!selectedTicketType) {
             return res.status(404).json({ status: false,  error: "No ticket found!" });
         }
-
+        
+        console.log(selectedTicketType.type, selectedTicketType.price, selectedTicketType.availableQuantity);
+        
         // Check if the selected ticket is still available
         if (selectedTicketType.availableQuantity <= 0) {
             return res.status(400).json({ status: false, error: "Selected ticket is sold out" });
         }
-
+        
         // Calculate the totalAmount based on the selected ticket price
         const totalAmount = selectedTicketType.price;
+        
+        // Create a new ticketToken
+        const tokenData = {
+            userID: user._id,
+            userEmail: user.userEmail,
+            userName: user.userName,
+            userBatch: user.userBatch,      
+            userRegID: user.userRegID,
+            userGender: user.userGender,
+            eventID: event._id,
+            eventName: event.eventName,
+            eventVenue: event.eventVenue,
+            eventDate: event.eventDate,
+            eventTime: event.eventTime,
+            selectedTicketType: selectedTicketType.type,
+          }
 
-        // Create a new Ticket using the TicketModel
+          const ticketToken = await createToken(tokenData)
+        
+
+
         const newTicket = new TicketModel({
             user,
             event,
@@ -61,25 +81,18 @@ exports.createTicket = async (req, res) => {
                 discountCouponLimit: selectedTicketType.discountCouponLimit,
                 discountAmount: selectedTicketType.discountAmount,
             },
+            token: ticketToken,
         });
-
-        const tokenData = {
-            ticket: newTicket, // Add the newTicket data to the tokenData
-        }
         
-        const ticketToken = await createToken(tokenData)
         
-        // Assign user token
-        console.log(ticketToken)
-
         // Update the soldQuantity and availableQuantity for the selected ticket in the event
         selectedTicketType.soldQuantity += 1;
         selectedTicketType.availableQuantity -= 1;
-
+        
         // Save the Ticket and update the event in a single transaction
         const session = await TicketModel.startSession();
         session.startTransaction();
-
+        
         try {
             await newTicket.save();
             await event.save();
@@ -90,9 +103,9 @@ exports.createTicket = async (req, res) => {
         } finally {
             session.endSession();
         }
-
+        
         // Return success response
-        res.status(201).json({ message: "Ticket created successfully", status: true,  Ticket: newTicket, ticketToken: ticketToken });
+        res.status(201).json({ message: "Ticket created successfully", status: true, Ticket: newTicket, ticketToken: ticketToken });
     } catch (error) {
         // Handle any errors that occur during the process
         console.error(error);
@@ -108,16 +121,19 @@ exports.getTickets = async (req, res) => {
         if (!Tickets) {
             return res.status(404).json({
                 error: 'No Tickets Found',
+                status: false,
             });
         }
         res.json({
             message: 'Tickets retrieved successfully',
+            status: true,
             Tickets: Tickets,
         });
     } catch (error) {
         console.error('Error getting Tickets:', error);
         res.status(500).json({
             error: 'Internal Server Error',
+            status: false,
         });
     }
 };
@@ -132,18 +148,21 @@ exports.getTicketbyID = async (req, res) => {
         if (!Ticket) {
             return res.status(404).json({
                 error: 'Ticket not found',
+                status: false,
                 message: 'The requested Ticket does not exist.',
             });
         }
 
         res.status(200).json({
             message: 'Ticket retrieved successfully',
+            status: true,
             event: Ticket,
         });
     } catch (error) {
         console.error('Error getting Ticket:', error);
         res.status(500).json({
             error: 'Internal Server Error',
+            status: false,
             message: 'An internal server error occurred while retrieving the Ticket.',
         });
     }
@@ -161,11 +180,12 @@ exports.deleteTicket = async (req, res) => {
 
         res.status(200).json({
             message: 'Ticket deleted successfully',
+            status: true,
             Ticket: deletedTicket,
         });
     } catch (error) {
         console.error('Error deleting Ticket:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ status: false, error: 'Internal Server Error' });
     }
 };
 
@@ -184,16 +204,19 @@ exports.undoCheckIn = async (req, res) => {
         if (!undoCheckIn) {
             return res.status(404).json({
             error: 'Guest not found',
+            status: false,
         });
     }
 
     res.json({
         message: 'Guest unchecked successfully',
+        status: true,
         event: undoCheckIn,
     });
 } catch (error) {
     console.error('Error updating guest checked in status:', error);
     res.status(500).json({
+        status: false,
         error: 'Internal Server Error',
     });
 }

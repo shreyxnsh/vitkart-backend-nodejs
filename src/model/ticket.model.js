@@ -58,6 +58,9 @@ const ticketSchema = new Schema({
             type: Number,
         },
     },
+    token: {
+        type: String,
+    },
 
 });
 
