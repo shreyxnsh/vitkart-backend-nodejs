@@ -2,8 +2,6 @@ const TicketModel = require('../model/ticket.model');
 const UserModel = require('../model/user.model');
 const EventModel = require('../model/event.model');
 const TicketTypeModel = require('../model/ticketType.model');
-const createToken = require('../util/createToken')
-const crypto = require('crypto');
 
 exports.createTicket = async (req, res) => {
     try {
@@ -39,7 +37,7 @@ exports.createTicket = async (req, res) => {
         }
         
         console.log(selectedTicketType.type, selectedTicketType.price, selectedTicketType.availableQuantity);
-        
+        TicketModel.syncIndexes()
         // Check if the selected ticket is still available
         if (selectedTicketType.availableQuantity <= 0) {
             return res.status(400).json({ status: false, error: "Selected ticket is sold out" });
@@ -122,9 +120,9 @@ exports.getTickets = async (req, res) => {
 // get Ticket by ID
 exports.getTicketbyID = async (req, res) => {
     try {
-        const eventTicketID = req.query.getTicketbyID;
+        const ticketID = req.query.getTicketbyID;
 
-        const Ticket = await TicketModel.findById(eventTicketID);
+        const Ticket = await TicketModel.findById(ticketID);
 
         if (!Ticket) {
             return res.status(404).json({
@@ -137,7 +135,7 @@ exports.getTicketbyID = async (req, res) => {
         res.status(200).json({
             message: 'Ticket retrieved successfully',
             status: true,
-            event: Ticket,
+            Ticket,
         });
     } catch (error) {
         console.error('Error getting Ticket:', error);
@@ -159,11 +157,7 @@ exports.deleteTicket = async (req, res) => {
             return res.status(404).json({ error: 'Ticket not found' });
         }
 
-        res.status(200).json({
-            message: 'Ticket deleted successfully',
-            status: true,
-            Ticket: deletedTicket,
-        });
+        res.status(200).json({ message: 'Ticket deleted successfully', status: true, Ticket: deletedTicket});
     } catch (error) {
         console.error('Error deleting Ticket:', error);
         res.status(500).json({ status: false, error: 'Internal Server Error' });
@@ -171,34 +165,67 @@ exports.deleteTicket = async (req, res) => {
 };
 
 // Access only for event host
+
+// Feature: CheckIn guest
+exports.checkIn = async (req, res) => {
+    try {
+        const ticketIdtoCheck = req.query.id;
+
+        const existingTicket = await TicketModel.findById(ticketIdtoCheck);
+
+        if (existingTicket?.isCheckIn) {
+            return res.json({ status: false, message: 'Guest already checked in', ticket: existingTicket });
+        }
+
+        const updatedTicket = await TicketModel.findByIdAndUpdate(
+            ticketIdtoCheck,
+            { $set: { isCheckIn: true } },
+            { new: true }
+        );
+
+        if (!updatedTicket) {
+            return res.status(404).json({ status: false, error: 'Guest not found' });
+        }
+
+        res.json({ status: true, message: 'Guest checked in successfully', ticket: updatedTicket });
+    } catch (error) {
+        console.error('Error updating guest checked in status:', error);
+        res.status(500).json({ status: false, error: 'Internal Server Error' });
+    }
+};
+
+
 // Feature: Undo guest checkIn
 
 exports.undoCheckIn = async (req, res) => {
     try {
-        const eventTicketIDtoUncheck = req.params.id;
+        const ticketIdtoUncheck = req.query.id;
 
-        const undoCheckIn = await TicketModel.findOneAndUpdate(
-            {'_id': eventTicketIDtoUncheck },
+        const existingTicket = await TicketModel.findById(ticketIdtoUncheck);
+
+        if (!existingTicket?.isCheckIn) {
+            return res.json({message: 'Guest not checkedIn', status: false, ticket: existingTicket });
+        }
+
+        const updatedTicket = await TicketModel.findByIdAndUpdate(
+            ticketIdtoUncheck,
             { $set: { isCheckIn: false } },
             { new: true }
         );
-        if (!undoCheckIn) {
-            return res.status(404).json({
-            error: 'Guest not found',
-            status: false,
-        });
-    }
 
-    res.json({
-        message: 'Guest unchecked successfully',
-        status: true,
-        event: undoCheckIn,
-    });
-} catch (error) {
-    console.error('Error updating guest checked in status:', error);
-    res.status(500).json({
-        status: false,
-        error: 'Internal Server Error',
-    });
-}
+
+        if (!updatedTicket) {
+            return res.status(404).json({ error: 'Guest not found', status: false });
+        }
+
+        res.json({
+            message: 'Guest unchecked successfully',
+            status: true,
+            Ticket: updatedTicket,
+        });
+    } catch (error) {
+        console.error('Error updating guest checked in status:', error);
+        res.status(500).json({ status: false, error: 'Internal Server Error' });
+    }
 };
+

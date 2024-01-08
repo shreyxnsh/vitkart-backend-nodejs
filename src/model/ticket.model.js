@@ -65,7 +65,8 @@ const ticketSchema = new Schema({
 
 });
 
-ticketSchema.index({ 'user': 1, 'event': 1 }, { unique: true });
+// ticketSchema.index({ 'user.userRegID': 1, 'event': 1, 'selectedTicketType._id': 1 }, { unique: true });
+
 
 // Create a model for the Order collection in the MongoDB database
 const TicketModel = mongoose.model('ticket', ticketSchema);

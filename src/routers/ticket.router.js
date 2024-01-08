@@ -11,10 +11,13 @@ router.get('/getTicket', TicketController.getTickets);
 router.get('/', TicketController.getTicketbyID);
 
 // Delete ticket
-router.delete('/deleteTicket/:id', TicketController.deleteTicket);
+router.delete('/deleteTicket', TicketController.deleteTicket);
+
+// CheckIn guest
+router.patch('/checkIn', TicketController.checkIn);
 
 // Undo guest checkIn
-router.patch('/undoCheckIn/:id', TicketController.undoCheckIn);
+router.patch('/undoCheckIn', TicketController.undoCheckIn);
 
 module.exports = router;
 

@@ -5,7 +5,7 @@ const ticketTypeController = require('../controller/ticketType.controller');
 router.post('/createticketType', ticketTypeController.createTicketType);
 
 // Finds tickets for that event 
-router.get('/getTicketbyId/:id', ticketTypeController.getTicketTypebyID);
+router.get('/getTicketTypebyId/:id', ticketTypeController.getTicketTypebyID);
 
 //Takes Event Id to retrive data
 router.get('/getEventTicketType/:id', ticketTypeController.getEventTicketTypes);

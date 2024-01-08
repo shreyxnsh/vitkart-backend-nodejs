@@ -9,12 +9,12 @@ const UserSchema = new mongoose.Schema(
         userRegID: {
             type: String,
             required: true,
-            unique: true,
+            // unique: true,
         },
         userEmail: {
             type: String,
             required: true,
-            unique: true,
+            // unique: true,
         },
         userGender: {
             type: String,
