@@ -149,22 +149,27 @@ exports.getTicketbyID = async (req, res) => {
 
 exports.deleteTicket = async (req, res) => {
     try {
-        const eventTicketIDToDelete = req.params.id;
+        const ticketIdtoDelete = req.query.id;
 
-        const deletedTicket = await TicketModel.findOneAndDelete({ '_id': eventTicketIDToDelete });
+        console.log('Deleting ticket with ID:', ticketIdtoDelete);
+
+        const deletedTicket = await TicketModel.findByIdAndDelete(ticketIdtoDelete);
 
         if (!deletedTicket) {
+            console.log('Ticket not found');
             return res.status(404).json({ error: 'Ticket not found' });
         }
 
-        res.status(200).json({ message: 'Ticket deleted successfully', status: true, Ticket: deletedTicket});
+        console.log('Ticket deleted:', deletedTicket);
+
+        res.status(200).json({ message: 'Ticket deleted successfully', status: true, Ticket: deletedTicket });
     } catch (error) {
         console.error('Error deleting Ticket:', error);
         res.status(500).json({ status: false, error: 'Internal Server Error' });
     }
 };
 
-// Access only for event host
+// Access only for the event host
 
 // Feature: CheckIn guest
 exports.checkIn = async (req, res) => {
