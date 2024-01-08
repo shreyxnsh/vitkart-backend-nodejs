@@ -32,6 +32,10 @@ const ticketSchema = new Schema({
         required: true,
     },
     selectedTicketType: {
+        _id: {
+            type: String,
+            required: true,
+        },
         type: {
             type: String,
             required: true,
@@ -57,9 +61,6 @@ const ticketSchema = new Schema({
         discountAmount: {
             type: Number,
         },
-    },
-    token: {
-        type: String,
     },
 
 });

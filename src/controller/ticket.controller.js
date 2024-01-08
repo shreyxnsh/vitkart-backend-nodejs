@@ -47,33 +47,15 @@ exports.createTicket = async (req, res) => {
         
         // Calculate the totalAmount based on the selected ticket price
         const totalAmount = selectedTicketType.price;
-        
-        // Create a new ticketToken
-        const tokenData = {
-            userID: user._id,
-            userEmail: user.userEmail,
-            userName: user.userName,
-            userBatch: user.userBatch,      
-            userRegID: user.userRegID,
-            userGender: user.userGender,
-            eventID: event._id,
-            eventName: event.eventName,
-            eventVenue: event.eventVenue,
-            eventDate: event.eventDate,
-            eventTime: event.eventTime,
-            selectedTicketType: selectedTicketType.type,
-          }
-
-          const ticketToken = await createToken(tokenData)
-        
-
 
         const newTicket = new TicketModel({
             user,
             event,
             totalAmount,
             discountCoupon,
+            isCheckIn: false,
             selectedTicketType: {
+                _id: selectedTicketType._id,
                 type: selectedTicketType.type,
                 price: selectedTicketType.price,
                 availableQuantity: selectedTicketType.availableQuantity,
@@ -81,7 +63,6 @@ exports.createTicket = async (req, res) => {
                 discountCouponLimit: selectedTicketType.discountCouponLimit,
                 discountAmount: selectedTicketType.discountAmount,
             },
-            token: ticketToken,
         });
         
         
@@ -105,7 +86,7 @@ exports.createTicket = async (req, res) => {
         }
         
         // Return success response
-        res.status(201).json({ message: "Ticket created successfully", status: true, Ticket: newTicket, ticketToken: ticketToken });
+        res.status(201).json({ message: "Ticket created successfully", status: true, Ticket: newTicket});
     } catch (error) {
         // Handle any errors that occur during the process
         console.error(error);
@@ -141,7 +122,7 @@ exports.getTickets = async (req, res) => {
 // get Ticket by ID
 exports.getTicketbyID = async (req, res) => {
     try {
-        const eventTicketID = req.params.id;
+        const eventTicketID = req.query.getTicketbyID;
 
         const Ticket = await TicketModel.findById(eventTicketID);
 
