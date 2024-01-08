@@ -1,9 +1,7 @@
 const User = require('../model/user.model')
 const { hashData, verifyHashedData } = require('../util/hashData')
 const createToken = require('../util/createToken')
-const {
-  sendVerificationOTPEmail
-} = require('../controller/emailVerification.controller')
+const { sendVerificationOTPEmail } = require('../controller/emailVerification.controller')
 
 // Authenticate User
 const authenticateUser = async (data) => {
@@ -52,18 +50,9 @@ const authenticateUser = async (data) => {
 // Create User
 const createNewUser = async (data) => {
   try {
-    const {
-      userName,
-      userRegID,
-      userEmail,
-      userGender,
-      userPassword,
-      userBatch,
-      userBirthDate,
-      userContactNum,
-    } = data
+    const {userEmail, userPassword, ...userData } = data;
 
-    const existingUser = await User.findOne({ email: userEmail })
+    const existingUser = await User.findOne({ userEmail: userEmail })
 
     if (existingUser) {
       throw Error('User already exists')
@@ -72,14 +61,9 @@ const createNewUser = async (data) => {
     // Hash Passwords
     const hashedPassword = await hashData(userPassword)
     const newUser = new User({
-      userName,
-      userRegID,
-      userEmail,
-      userGender,
+      userEmail: userEmail,
       userPassword: hashedPassword,
-      userBatch,
-      userBirthDate,
-      userContactNum,
+      ...userData,
     })
 
     const createdUser = await newUser.save()
@@ -90,122 +74,67 @@ const createNewUser = async (data) => {
 }
 
 // Sign In
-
 exports.signIn = async (req, res) => {
   try {
-    let { userEmail, userPassword } = req.body
-    userEmail = userEmail.trim()
-    userPassword = userPassword.trim()
+    let { userEmail, userPassword } = req.body;
+    userEmail = userEmail;
+    userPassword = userPassword;
 
     if (!(userEmail && userPassword)) {
-      throw Error('Empty credentials supplied')
+      throw new Error('Empty credentials supplied');rs
     }
 
     const authenticatedUser = await authenticateUser({
       userEmail,
       userPassword,
-    })
+    });
 
-    res
-      .status(200)
-      .json({ status: true, message: 'SignIn successful', authenticatedUser })
+    // Log the authenticated user for debugging purposes
+    console.log('Authenticated User:', authenticatedUser);
+
+    res.status(200).json({
+      success: true,
+      message: 'Sign-in successful',
+      authenticatedUser,
+    });
   } catch (error) {
-    res.status(400).send(error.message)
+    // Log the error for debugging purposes
+    console.error('Sign-in Error:', error);
+
+    res.status(401).json({
+      status: false,
+      message: 'Invalid credentials',
+    });
   }
-}
+};
 
 // Sign Up
 exports.signUp = async (req, res) => {
   try {
-    const {
-      userName,
-      userRegID,
-      userEmail,
-      userGender,
-      userPassword,
-      userBatch,
-      userBirthDate,
-      userContactNum,
-    } = req.body
+    const { userEmail, userPassword, ...userData} = req.body;
 
     console.log('Received data:', req.body)
 
-    console.log('Variables before trimming:', {
-      userName,
-      userRegID,
-      userEmail,
-      userGender,
-      userPassword,
-      userBatch,
-      userBirthDate,
-      userContactNum,
-    })
+    const checkUser = await User.findOne({userEmail})
 
-    // Ensure all variables are defined before using trim()
-
-    const trimmedUserName = userName
-    const trimmedUserRegID = userRegID ? userRegID.trim() : ''
-    const trimmedUserEmail = userEmail ? userEmail.trim() : ''
-    const trimmedUserGender = userGender ? userGender.trim() : ''
-    const trimmedUserPassword = userPassword ? userPassword.trim() : ''
-    const trimmedUserBatch = userBatch ? userBatch.trim() : ''
-    const trimmedUserBirthDate = userBirthDate ? userBirthDate.trim() : ''
-    const trimmedUserContact = userContactNum ? userContactNum.trim() : ''
-
-    const validationErrors = []
-
-    // Check for empty input fields
-    if (!trimmedUserEmail || !trimmedUserRegID || !trimmedUserPassword) {
-      validationErrors.push('Empty input fields!')
-    }
-
-    // Validate email format
-    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,47}$/.test(trimmedUserEmail)) {
-      validationErrors.push('Invalid email entered')
-    }
-
-    // Validate password length
-    if (!trimmedUserPassword || trimmedUserPassword.length < 8) {
-      validationErrors.push('Password is too short!')
-    }
-
-    if (trimmedUserBatch && !/^\d{4}$/.test(trimmedUserBatch)) {
-      validationErrors.push('Invalid user batch! It must be a 4-digit number.')
-    }
-
-
-    if (trimmedUserContact && !/^[0-9]{10}$/.test(trimmedUserContact)) {
-      validationErrors.push('Invalid user contact number format!')
-    }
-
-    // If there are validation errors, send them in the response
-    if (validationErrors.length > 0) {
-      res.status(400).json({ errors: validationErrors })
+    if (checkUser) {
+      res.status(400).json({ status: false, errors: "User Already Exist" })
       return
     }
 
-    // The rest of your signup logic goes here
     const newUser = await createNewUser({
-      userName: trimmedUserName,
-      userRegID: trimmedUserRegID,
-      userEmail: trimmedUserEmail,
-      userGender: trimmedUserGender,
-      userPassword: trimmedUserPassword,
-      userBatch: trimmedUserBatch,
-      userBirthDate: trimmedUserBirthDate,
-      userContactNum: trimmedUserContact,
+      userEmail: userEmail,
+      userPassword: userPassword,
+      ...userData,
     })
 
-    await sendVerificationOTPEmail(userName, userEmail)
-    res.status(200).json({ message: 'Signup successful', user: newUser })
-    console.log('Verification Email Sent | Line 150')
+    await sendVerificationOTPEmail(newUser.userName, newUser.userEmail)
+    res.status(200).json({ message: 'Signup successful', status: true, user: newUser })
   } catch (error) {
     console.error('Error in signup:', error)
 
     // Send a more informative error response
-    res
-      .status(500)
-      .json({ error: 'Internal server error', details: error.message })
+    res.status(500).json({error: 'Internal server error', status: false, details: error.message })
   }
 }
 
